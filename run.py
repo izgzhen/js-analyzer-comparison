@@ -6,13 +6,13 @@ js_files = glob.glob("test262-master/test/**/*.js", recursive=True)
 print("Total JS files: %s" % len(js_files))
 
 def tajs_cmd(js_path: str):
-    return ["java", "-jar", "../TAJS/dist/tajs-all.jar", js_path]
+    return ["java", "-jar", "TAJS/dist/tajs-all.jar", js_path]
 
 def wala_cmd(js_path: str):
     return ["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path]
 
 def safe_cmd(js_path: str):
-    return ["../safe/bin/safe", "cfgBuild", js_path]
+    return ["safe/bin/safe", "cfgBuild", js_path]
 
 tools = {
     "tajs": tajs_cmd,
