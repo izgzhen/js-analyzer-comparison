@@ -10,13 +10,17 @@ js_files = glob.glob("test262-master/test/**/*.js", recursive=True)
 print("Total JS files: %s" % len(js_files))
 
 def tajs_cmd(js_path: str):
-    return ["java", "-jar", "TAJS/dist/tajs-all.jar", js_path]
+    _, _, code = try_call_std(["java", "-jar", "TAJS/dist/tajs-all.jar", js_path], print_cmd=False, output=False, noexception=True)
+    return code == 0
 
 def wala_cmd(js_path: str):
-    return ["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path]
+    _, _, code = try_call_std(["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path], print_cmd=False, output=False, noexception=True)
+    return code == 0
 
 def safe_cmd(js_path: str):
-    return ["safe/bin/safe", "cfgBuild", js_path]
+    out = js_path.replace(".js", ".safe_ast")
+    stdout, stderr, code = try_call_std(["safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], print_cmd=False, output=False, noexception=True)
+    return os.path.exists(out)
 
 tools = {
     "tajs": tajs_cmd,
@@ -38,18 +42,21 @@ random.seed(0)
 tasks = random.sample(js_files, k=NSAMPLES)
 
 def process(f: str):
-    result = {}
-    for name, get_cmd in tools.items():
+    result = {
+        "file": f,
+        "outputs": {}
+    }
+    for name, cmd in tools.items():
         now = time.time()
-        stdout, stderr, code = try_call_std(get_cmd(f), print_cmd=False, output=False, noexception=True)
+        success = cmd(f)
         duration_seconds = time.time() - now
-        if code == 0:
-            result[name] = {
+        if success:
+            result["outputs"][name] = {
                 "status": "ok",
                 "duration_seconds": duration_seconds
             }
         else:
-            result[name] = {
+            result["outputs"][name] = {
                 "status": "failure",
                 "duration_seconds": duration_seconds
             }
