@@ -10,20 +10,34 @@ js_files = glob.glob("test262-master/test/**/*.js", recursive=True)
 js_files += glob.glob("jsnice/data/**/*.js", recursive=True)
 print("Total JS files: %s" % len(js_files))
 
+run_kwargs = {
+    "print_cmd": False,
+    "output": False,
+    "noexception": True,
+    "timeout_s": 10
+}
+
+def cc_cmd(js_path: str):
+    out = js_path.replace(".js", ".js_cc")
+    _, _, code = try_call_std(["java", "-jar", "lib/", "--debug",
+                                "--formatting=PRETTY_PRINT", "--js", js_path, "--js_output_file", out], **run_kwargs)
+    return code == 0
+
 def tajs_cmd(js_path: str):
-    _, _, code = try_call_std(["java", "-jar", "TAJS/dist/tajs-all.jar", js_path], print_cmd=False, output=False, noexception=True)
+    _, _, code = try_call_std(["java", "-jar", "TAJS/dist/tajs-all.jar", js_path], **run_kwargs)
     return code == 0
 
 def wala_cmd(js_path: str):
-    _, _, code = try_call_std(["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path], print_cmd=False, output=False, noexception=True)
+    _, _, code = try_call_std(["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path], **run_kwargs)
     return code == 0
 
 def safe_cmd(js_path: str):
     out = js_path.replace(".js", ".safe_ast")
-    stdout, stderr, code = try_call_std(["safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], print_cmd=False, output=False, noexception=True)
+    stdout, stderr, code = try_call_std(["safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], **run_kwargs)
     return os.path.exists(out)
 
 tools = {
+    "cc": cc_cmd,
     "tajs": tajs_cmd,
     "wala": wala_cmd,
     "safe": safe_cmd
