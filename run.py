@@ -11,7 +11,7 @@ js_files += glob.glob("jsnice/data/**/*.js", recursive=True)
 print("Total JS files: %s" % len(js_files))
 
 run_kwargs = {
-    "print_cmd": False,
+    #"print_cmd": False,
     "output": False,
     "noexception": True,
     "timeout_s": 10
