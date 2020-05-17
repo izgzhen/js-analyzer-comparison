@@ -28,9 +28,14 @@ NPROC = 4
 if os.getenv("NPROC") is not None:
     NPROC = int(os.getenv("NPROC")) # type: ignore
 
+
+NSAMPLES = 20
+if os.getenv("NSAMPLES") is not None:
+    NSAMPLES = int(os.getenv("NSAMPLES")) # type: ignore
+
 random.seed(0)
 
-tasks = random.sample(js_files, k=20)
+tasks = random.sample(js_files, k=NSAMPLES)
 
 def process(f: str):
     result = {}
