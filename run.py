@@ -7,6 +7,7 @@ import time
 import os
 
 js_files = glob.glob("test262-master/test/**/*.js", recursive=True)
+js_files += glob.glob("jsnice/data/**/*.js", recursive=True)
 print("Total JS files: %s" % len(js_files))
 
 def tajs_cmd(js_path: str):
