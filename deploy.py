@@ -18,7 +18,8 @@ files = [
     "safe/lib_managed",
     "safe/lib",
     "TAJS/dist/tajs-all.jar",
-    "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar",
+    "lib"
 ]
 
 def rsync(relpath: str):

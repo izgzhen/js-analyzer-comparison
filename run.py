@@ -19,9 +19,18 @@ run_kwargs = {
 
 def cc_cmd(js_path: str):
     out = js_path.replace(".js", ".js_cc")
-    _, _, code = try_call_std(["java", "-jar", "lib/", "--debug",
+    _, _, code = try_call_std(["java", "-jar", "lib/closure-compiler-v20200112.jar", "--debug",
                                 "--formatting=PRETTY_PRINT", "--js", js_path, "--js_output_file", out], **run_kwargs)
     return code == 0
+
+def with_cc_wrapper(f):
+    def wrapped(js_path):
+        cc = js_path.replace(".js", ".js_cc")
+        if os.path.exists(cc):
+            return f(cc)
+        else:
+            return None
+    return wrapped
 
 def tajs_cmd(js_path: str):
     _, _, code = try_call_std(["java", "-jar", "TAJS/dist/tajs-all.jar", js_path], **run_kwargs)
@@ -36,12 +45,16 @@ def safe_cmd(js_path: str):
     stdout, stderr, code = try_call_std(["safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], **run_kwargs)
     return os.path.exists(out)
 
-tools = {
-    "cc": cc_cmd,
-    "tajs": tajs_cmd,
-    "wala": wala_cmd,
-    "safe": safe_cmd
-}
+# The order is important
+tools = [
+    ("cc", cc_cmd),
+    ("tajs", tajs_cmd),
+    ("wala", wala_cmd),
+    ("safe", safe_cmd),
+    ("cc_tajs", with_cc_wrapper(tajs_cmd)),
+    ("cc_wala", with_cc_wrapper(wala_cmd)),
+    ("cc_safe", with_cc_wrapper(safe_cmd))
+]
 
 NPROC = 4
 if os.getenv("NPROC") is not None:
@@ -61,7 +74,7 @@ def process(f: str):
         "file": f,
         "outputs": {}
     }
-    for name, cmd in tools.items():
+    for name, cmd in tools:
         now = time.time()
         success = cmd(f)
         duration_seconds = time.time() - now
