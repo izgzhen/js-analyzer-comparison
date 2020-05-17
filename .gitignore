@@ -4,3 +4,4 @@ test262-master/
 .venv
 safe
 TAJS
+results.json
