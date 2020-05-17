@@ -2,6 +2,7 @@
 
 - Compatibility
   - https://github.com/tc39/test262
+  - https://www.sri.inf.ethz.ch/downloads/jsnice_git_repos.txt
 
 
 Tools:
