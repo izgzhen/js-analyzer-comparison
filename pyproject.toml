@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 msbase = {git = "https://github.com/izgzhen/msbase.py"}
+pandas = "^1.0.3"
+seaborn = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 
