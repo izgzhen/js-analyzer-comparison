@@ -14,12 +14,12 @@ run_kwargs = {
     #"print_cmd": False,
     "output": False,
     "noexception": True,
-    "timeout_s": 10
+    # "timeout_s": 10 # FIXME: this doesn't seem effective for me
 }
 
 def cc_cmd(js_path: str):
     out = js_path.replace(".js", ".js_cc")
-    _, _, code = try_call_std(["java", "-jar", "lib/closure-compiler-v20200112.jar", "--debug",
+    _, _, code = try_call_std(["timeout", "30", "java", "-jar", "lib/closure-compiler-v20200112.jar", "--debug",
                                 "--formatting=PRETTY_PRINT", "--js", js_path, "--js_output_file", out], **run_kwargs)
     return code == 0
 
@@ -33,16 +33,16 @@ def with_cc_wrapper(f):
     return wrapped
 
 def tajs_cmd(js_path: str):
-    _, _, code = try_call_std(["java", "-jar", "TAJS/dist/tajs-all.jar", js_path], **run_kwargs)
+    _, _, code = try_call_std(["timeout", "30", "java", "-jar", "TAJS/dist/tajs-all.jar", js_path], **run_kwargs)
     return code == 0
 
 def wala_cmd(js_path: str):
-    _, _, code = try_call_std(["java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path], **run_kwargs)
+    _, _, code = try_call_std(["timeout", "30", "java", "-jar", "wala-demo/target/wala-demo-1.0-SNAPSHOT-jar-with-dependencies.jar", js_path], **run_kwargs)
     return code == 0
 
 def safe_cmd(js_path: str):
     out = js_path.replace(".js", ".safe_ast")
-    stdout, stderr, code = try_call_std(["safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], **run_kwargs)
+    stdout, stderr, code = try_call_std(["timeout", "30", "safe/bin/safe", "parse", "-parser:out=%s" % out, js_path], **run_kwargs)
     return os.path.exists(out)
 
 # The order is important

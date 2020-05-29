@@ -14,3 +14,15 @@ Tools:
 - tajs: `9c746c97ad063f8c891310f29bc39217076bafe2`
   - `git submodule update --init`
   - `ant`
+
+## Results
+
+Matrix of "ok" results:
+
+![](heatmap_ok.svg)
+
+Matrix of "failure" results:
+
+![](heatmap_failure.svg)
+
+[Path to total counts](counts.md)

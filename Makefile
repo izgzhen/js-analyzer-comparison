@@ -1,4 +1,4 @@
-export REMOTE_HOST=tricycle
+export REMOTE_HOST=bicycle
 export REMOTE_DIR=/scratch/zhen/js-tools
 
 deploy:
